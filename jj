@@ -1,0 +1,60 @@
+$(function(){
+  var $document = $(document);
+    function createMultiSelect(type) {
+      var isOpen = false;
+
+      function getMessage() {
+        var selected = $values.filter(':checked').length;
+        var all_filter = $filters.filter('[data-filter=all]').length;
+        if (selected === $values.length && all_filter) {
+          return $filters.filter('[data-filter=all]').closest('.drop__content__menu').text();
+        } else {
+          return selected + ' ' + capitalize(selected === 1 ? type : type + 's');
+        }
+      }
+
+      var $popover = $('#' + type + '-list');
+      var $button = $popover.closest('.btn--drop__wrap').find(">button");
+      var $filters = $popover.find('[type=checkbox][data-filter]');
+      var $values = $popover.find('[type=checkbox]:not([data-filter])');
+
+      $popover.on('change', '[type=checkbox]', function(event) {
+        var filter = this.getAttribute('data-filter');
+        var value = this.checked;
+
+        $filters.prop('checked', false);
+
+        if (filter) {
+          this.checked = value;
+          if (filter === 'all') {
+            $values.filter(':visible').prop('checked', this.checked);
+          } else {
+            $values.prop('checked', false)
+            .filter(':visible')
+            .filter(':not([value='+filter+'])').prop('checked', this.checked);
+          }
+        } else {
+          var selected = $values.filter(':checked').length;
+          if (selected === $values.length) {
+            $filters.filter('[data-filter=all]').prop('checked', true);
+          } else if (selected === $values.length - 1) {
+            $filters.filter('[data-filter='+this.value+']').prop('checked', true);
+          }
+        }
+
+        $button.text($.trim(getMessage()));
+      });
+
+      $popover.closest('.js-multiselect').on('update_label', function() {
+        $button.text($.trim(getMessage()));
+      }).trigger('update_label');
+    }
+
+    function capitalize(text) {
+      return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
+
+    createMultiSelect('verb');
+    createMultiSelect('pronoun');
+    createMultiSelect('tense');
+});
