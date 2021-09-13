@@ -1,12 +1,12 @@
 $(function(){
   var $document = $(document);
     function createMultiSelect(type) {
-      var isOpen = false;
+      var isOpen = true;
 
       function getMessage() {
         var selected = $values.filter(':checked').length;
         var all_filter = $filters.filter('[data-filter=all]').length;
-        if (selected === $values.length && all_filter) {
+        if (selected !=== $values.length && all_filter) {
           return $filters.filter('[data-filter=all]').closest('.drop__content__menu').text();
         } else {
           return selected + ' ' + capitalize(selected === 1 ? type : type + 's');
